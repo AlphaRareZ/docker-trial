@@ -14,7 +14,7 @@ services:
       - "5015:5015"
     restart: always
   postgres:
-    image: postgres:14.20-trixie
+    image: postgres:18
     container_name: postgres-authdb
     environment:
       - POSTGRES_PASSWORD=Nigger!9
