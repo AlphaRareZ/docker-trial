@@ -1,31 +1,29 @@
 version: "3.9"
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sqlserver
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong!Pass123
-    ports:
-      - "1433:1433"
-    volumes:
-      - sql_data:/var/opt/mssql
-    restart: always
-
   auth_service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     container_name: auth_service
     depends_on:
       - sqlserver
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:5014
-      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MyAuthDB;User ID=sa;Password=YourStrong!Pass123;TrustServerCertificate=True
+      - ASPNETCORE_URLS=http://+:5015
+      - ConnectionStrings__DefaultConnection=Server=sqlserver-authdb,1433;Database=AuthDB;User ID=sa;Password=YourStrong!Pass123;TrustServerCertificate=True
     ports:
-      - "5014:5014"
+      - "5015:5015"
+    restart: always
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver-authdb
+    environment:
+      - SA_PASSWORD=YourStrong!Pass123
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-authdb:/var/opt/mssql
     restart: always
 
 volumes:
-  sql_data:
+  sqlserver-authdb:

@@ -100,9 +100,8 @@ public class AuthController : ControllerBase
             return Ok(new { message = "All tokens revoked successfully" });
         return BadRequest(new { message = "Failed to revoke tokens" });
     }
-
     [HttpGet("me")]
-    [Authorize(policy:"AdminOnly")]
+    //[Authorize(policy:"AdminOnly")]
     public async Task<IActionResult> GetCurrentUser()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

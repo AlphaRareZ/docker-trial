@@ -16,7 +16,7 @@ public static class IdentityAuthServiceExtensions
 
         // Add Entity Framework and Identity
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("PostgresConnection")));
 
         services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
