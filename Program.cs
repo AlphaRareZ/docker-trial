@@ -157,7 +157,15 @@ else
 {
     app.UseCors("Production");
 }
-
+// Scalar UI DELETE IF NOT IN DEV
+    app.MapScalarApiReference(options =>
+    {
+        options
+            .WithTitle("My API Documentation")
+            .WithTheme(ScalarTheme.BluePlanet)
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+    });
+    
 app.UseAuthentication(); // Must come before UseAuthorization
 app.UseAuthorization();
 
