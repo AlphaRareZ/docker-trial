@@ -1,4 +1,4 @@
-version: "3.9"
+# version: "3.9"
 services:
   auth_service:
     build:
@@ -6,24 +6,25 @@ services:
       dockerfile: dockerfile
     container_name: auth_service
     depends_on:
-      - sqlserver
+      - postgres
     environment:
       - ASPNETCORE_URLS=http://+:5015
-      - ConnectionStrings__DefaultConnection=Server=sqlserver-authdb,1433;Database=AuthDB;User ID=sa;Password=YourStrong!Pass123;TrustServerCertificate=True
+      - ConnectionStrings__DefaultConnection=Host=postgres-authdb;Port=5432;Database=asptrial;Username=postgres;Password=Nigger!9;
     ports:
       - "5015:5015"
     restart: always
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sqlserver-authdb
+  postgres:
+    image: postgres:14.20-trixie
+    container_name: postgres-authdb
     environment:
-      - SA_PASSWORD=YourStrong!Pass123
-      - ACCEPT_EULA=Y
+      - POSTGRES_PASSWORD=Nigger!9
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=asptrial
     ports:
-      - "1433:1433"
+      - "5432:5432"
     volumes:
-      - sqlserver-authdb:/var/opt/mssql
+      - postgres-authdb:/var/lib/postgresql/data
     restart: always
 
 volumes:
-  sqlserver-authdb:
+  postgres-authdb:
