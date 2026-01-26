@@ -9,7 +9,7 @@ services:
       - postgres
     environment:
       - ASPNETCORE_URLS=http://+:5015
-      - ConnectionStrings__DefaultConnection=Host=postgres-authdb;Port=5432;Database=asptrial;Username=postgres;Password=Nigger!9;
+      - ConnectionStrings__PostgresConnection=Host=postgres-authdb;Port=5432;Database=asptrial;Username=postgres;Password=Nigger!9;
     ports:
       - "5015:5015"
     restart: always
