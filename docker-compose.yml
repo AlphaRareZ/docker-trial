@@ -23,7 +23,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres-authdb:/var/lib/postgresql/data
+      - postgres-authdb:/var/lib/postgresql
     restart: always
 
 volumes:
