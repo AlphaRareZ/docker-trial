@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\PostgresWithASPTrial\\2 - AuthService\\AuthenticationService.csproj": {}
+    "D:\\PostgresWithASPTrial\\docker-trial\\AuthenticationService.csproj": {}
   },
   "projects": {
-    "D:\\PostgresWithASPTrial\\2 - AuthService\\AuthenticationService.csproj": {
+    "D:\\PostgresWithASPTrial\\docker-trial\\AuthenticationService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\PostgresWithASPTrial\\2 - AuthService\\AuthenticationService.csproj",
+        "projectUniqueName": "D:\\PostgresWithASPTrial\\docker-trial\\AuthenticationService.csproj",
         "projectName": "AuthenticationService",
-        "projectPath": "D:\\PostgresWithASPTrial\\2 - AuthService\\AuthenticationService.csproj",
+        "projectPath": "D:\\PostgresWithASPTrial\\docker-trial\\AuthenticationService.csproj",
         "packagesPath": "C:\\Users\\dodo1\\.nuget\\packages\\",
-        "outputPath": "D:\\PostgresWithASPTrial\\2 - AuthService\\obj\\",
+        "outputPath": "D:\\PostgresWithASPTrial\\docker-trial\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
