@@ -176,6 +176,8 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> GetCurrentUser()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        Console.WriteLine(Request.Cookies["accessToken"]);
+        Console.WriteLine(Request.Cookies["refreshToken"]);
         var user = await _authService.GetUserByIdAsync(userId!);
         if (user == null)
             return NotFound();
