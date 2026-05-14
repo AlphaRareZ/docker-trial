@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "29QIS20ZByI=",
+  "dgSpecHash": "X1KLyw/N9Wo=",
   "success": true,
-  "projectFilePath": "D:\\PostgresWithASPTrial\\docker-trial\\AuthenticationService.csproj",
+  "projectFilePath": "D:\\GraduationProject\\Sprints\\Sprint5-6-7-8-9-10\\Dockerizing\\PostgresWithASPTrial\\docker-trial\\AuthenticationService.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\dodo1\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\dodo1\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.0\\microsoft.aspnetcore.authentication.jwtbearer.10.0.0.nupkg.sha512",

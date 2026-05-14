@@ -3441,11 +3441,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\PostgresWithASPTrial\\docker-trial\\AuthenticationService.csproj",
+      "projectUniqueName": "D:\\GraduationProject\\Sprints\\Sprint5-6-7-8-9-10\\Dockerizing\\PostgresWithASPTrial\\docker-trial\\AuthenticationService.csproj",
       "projectName": "AuthenticationService",
-      "projectPath": "D:\\PostgresWithASPTrial\\docker-trial\\AuthenticationService.csproj",
+      "projectPath": "D:\\GraduationProject\\Sprints\\Sprint5-6-7-8-9-10\\Dockerizing\\PostgresWithASPTrial\\docker-trial\\AuthenticationService.csproj",
       "packagesPath": "C:\\Users\\dodo1\\.nuget\\packages\\",
-      "outputPath": "D:\\PostgresWithASPTrial\\docker-trial\\obj\\",
+      "outputPath": "D:\\GraduationProject\\Sprints\\Sprint5-6-7-8-9-10\\Dockerizing\\PostgresWithASPTrial\\docker-trial\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
