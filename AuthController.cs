@@ -172,7 +172,7 @@ public class AuthController : ControllerBase
         return BadRequest(new { message = "Failed to revoke tokens" });
     }
     [HttpGet("me")]
-    //[Authorize(policy:"AdminOnly")]
+    [Authorize]
     public async Task<IActionResult> GetCurrentUser()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
