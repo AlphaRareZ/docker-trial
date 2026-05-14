@@ -13,84 +13,57 @@ var builder = WebApplication.CreateBuilder(args);
 // 1. Add services to the container
 builder.Services.AddControllers();
 
-
 // Add Identity Auth Service (includes DbContext and Identity setup)
 builder.Services.AddIdentityAuthService(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 var isDevelopment = builder.Environment.IsDevelopment();
+
 // Configure JWT Authentication
 builder.Services
     .AddAuthentication(options =>
     {
-        options.DefaultAuthenticateScheme =
-            JwtBearerDefaults.AuthenticationScheme;
-
-        options.DefaultChallengeScheme =
-            JwtBearerDefaults.AuthenticationScheme;
-
-        options.DefaultScheme =
-            JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
     {
-        var secretKey =
-            builder.Configuration["JwtSettings:SecretKey"];
+        var secretKey = builder.Configuration["JwtSettings:SecretKey"];
+        var issuer = builder.Configuration["JwtSettings:Issuer"];
+        var audience = builder.Configuration["JwtSettings:Audience"];
 
-        var issuer =
-            builder.Configuration["JwtSettings:Issuer"];
-
-        var audience =
-            builder.Configuration["JwtSettings:Audience"];
-
-        if (string.IsNullOrEmpty(secretKey) ||
-            secretKey.Length < 32)
+        if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
         {
-            throw new InvalidOperationException(
-                "JWT SecretKey must be at least 32 characters long");
+            throw new InvalidOperationException("JWT SecretKey must be at least 32 characters long");
         }
 
         options.SaveToken = true;
-
         options.RequireHttpsMetadata = false;
 
-        options.TokenValidationParameters =
-            new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-
-                IssuerSigningKey =
-                    new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(secretKey)
-                    ),
-
-                ValidateIssuer = true,
-                ValidIssuer = issuer,
-
-                ValidateAudience = true,
-                ValidAudience = audience,
-
-                ValidateLifetime = true,
-
-                ClockSkew = TimeSpan.Zero,
-
-                NameClaimType = ClaimTypes.Name,
-
-                RoleClaimType = ClaimTypes.Role,
-
-                RequireExpirationTime = true,
-
-                RequireSignedTokens = true
-            };
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+            ValidateIssuer = true,
+            ValidIssuer = issuer,
+            ValidateAudience = true,
+            ValidAudience = audience,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+            NameClaimType = ClaimTypes.Name,
+            RoleClaimType = ClaimTypes.Role,
+            RequireExpirationTime = true,
+            RequireSignedTokens = true
+        };
 
         // Read JWT From HttpOnly Cookie
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
             {
-                var token =
-                    context.Request.Cookies["accessToken"];
+                var token = context.Request.Cookies["accessToken"];
 
                 if (!string.IsNullOrEmpty(token))
                 {
@@ -101,6 +74,7 @@ builder.Services
             }
         };
     });
+
 // Add Authorization
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"))
@@ -108,23 +82,16 @@ builder.Services.AddAuthorizationBuilder()
 
 builder.Services.AddAuthorization();
 
-// Add CORS policies
+// CRITICAL FIX: CORS policies must explicitly define origins when dealing with Cookies/Credentials
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("NextJsCorsPolicy", policy =>
     {
-        policy.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
-
-    options.AddPolicy("Production", policy =>
-    {
-        policy.WithOrigins("https://localhost:3000", "http://localhost:3000")
+        policy.WithOrigins("http://ligandai.netlify.app", "https://ligandai.netlify.app") // Must be explicit for credentials!
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials();
-    });
+            .AllowCredentials(); // This line allows the browser to send the HttpOnly cookie
+    });git add .
 });
 
 builder.Services.AddMemoryCache();
@@ -146,15 +113,11 @@ app.Use(async (context, next) =>
 
 app.UseResponseCompression();
 
-// Apply CORS based on Environment
-
-app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "Production");
-//app.UseCors("AllowAll");
-
+// CRITICAL FIX: Apply the fixed CORS policy
+app.UseCors("NextJsCorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 // Generate the OpenAPI JSON
 app.MapOpenApi();
@@ -167,7 +130,6 @@ app.MapScalarApiReference(options =>
         .WithTheme(ScalarTheme.BluePlanet)
         .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
 });
-// --- DOCUMENTATION FIX END ---
 
 app.MapControllers();
 
