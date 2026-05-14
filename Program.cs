@@ -87,11 +87,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("NextJsCorsPolicy", policy =>
     {
-        policy.WithOrigins("http://ligandai.netlify.app", "https://ligandai.netlify.app") // Must be explicit for credentials!
+        policy.WithOrigins("ligandai.netlify.app", "https://ligandai.netlify.app") // Must be explicit for credentials!
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials(); // This line allows the browser to send the HttpOnly cookie
-    });git add .
+    });
 });
 
 builder.Services.AddMemoryCache();
