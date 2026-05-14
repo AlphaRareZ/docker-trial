@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,15 +9,18 @@ namespace AuthenticationService;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-
-    public AuthController(IAuthService authService)
+    private readonly IWebHostEnvironment _env;    
+    
+    public AuthController(IAuthService authService, IWebHostEnvironment env)
     {
         _authService = authService;
+        _env = env;
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
+        var isDevelopment = _env.IsDevelopment();
         var result = await _authService.LoginAsync(request);
 
         if (!result.Success)
@@ -28,9 +29,9 @@ public class AuthController : ControllerBase
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
             SameSite = SameSiteMode.None,
             Expires = result.ExpiresAt,
+            Secure = !isDevelopment,
             Path = "/"
         };
 
@@ -40,8 +41,8 @@ public class AuthController : ControllerBase
             new CookieOptions()
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                Secure = !isDevelopment,
+                SameSite = SameSiteMode.Lax,
                 Expires = result.ExpiresAt,
                 Path = "/"
             }
@@ -53,8 +54,8 @@ public class AuthController : ControllerBase
             new CookieOptions()
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                Secure = !isDevelopment,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTime.UtcNow.AddDays(30),
                 Path = "/"
             }
@@ -90,8 +91,10 @@ public class AuthController : ControllerBase
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken()
     {
+        var isDevelopment = _env.IsDevelopment();
         var refreshToken =
             Request.Cookies["refreshToken"];
+
 
         if (string.IsNullOrEmpty(refreshToken))
         {
@@ -122,8 +125,8 @@ public class AuthController : ControllerBase
             new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                Secure = !isDevelopment,
+                SameSite = SameSiteMode.Lax,
                 Expires = result.ExpiresAt,
                 Path = "/"
             });
@@ -134,8 +137,8 @@ public class AuthController : ControllerBase
             new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                Secure = !isDevelopment,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTime.UtcNow.AddDays(30),
                 Path = "/"
             });

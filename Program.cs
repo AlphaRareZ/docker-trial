@@ -13,12 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 // 1. Add services to the container
 builder.Services.AddControllers();
 
+
 // Add Identity Auth Service (includes DbContext and Identity setup)
 builder.Services.AddIdentityAuthService(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
-
+var isDevelopment = builder.Environment.IsDevelopment();
 // Configure JWT Authentication
 builder.Services
     .AddAuthentication(options =>
