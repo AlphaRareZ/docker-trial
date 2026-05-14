@@ -20,43 +20,86 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 // Configure JWT Authentication
-builder.Services.AddAuthentication(options =>
+builder.Services
+    .AddAuthentication(options =>
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme =
+            JwtBearerDefaults.AuthenticationScheme;
+
+        options.DefaultChallengeScheme =
+            JwtBearerDefaults.AuthenticationScheme;
+
+        options.DefaultScheme =
+            JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
     {
-        var secretKey = builder.Configuration["JwtSettings:SecretKey"];
-        var issuer = builder.Configuration["JwtSettings:Issuer"];
-        var audience = builder.Configuration["JwtSettings:Audience"];
+        var secretKey =
+            builder.Configuration["JwtSettings:SecretKey"];
 
-        if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
+        var issuer =
+            builder.Configuration["JwtSettings:Issuer"];
+
+        var audience =
+            builder.Configuration["JwtSettings:Audience"];
+
+        if (string.IsNullOrEmpty(secretKey) ||
+            secretKey.Length < 32)
         {
-            throw new InvalidOperationException("JWT SecretKey must be at least 32 characters long");
+            throw new InvalidOperationException(
+                "JWT SecretKey must be at least 32 characters long");
         }
 
         options.SaveToken = true;
+
         options.RequireHttpsMetadata = false;
 
-        options.TokenValidationParameters = new TokenValidationParameters
+        options.TokenValidationParameters =
+            new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(secretKey)
+                    ),
+
+                ValidateIssuer = true,
+                ValidIssuer = issuer,
+
+                ValidateAudience = true,
+                ValidAudience = audience,
+
+                ValidateLifetime = true,
+
+                ClockSkew = TimeSpan.Zero,
+
+                NameClaimType = ClaimTypes.Name,
+
+                RoleClaimType = ClaimTypes.Role,
+
+                RequireExpirationTime = true,
+
+                RequireSignedTokens = true
+            };
+
+        // Read JWT From HttpOnly Cookie
+        options.Events = new JwtBearerEvents
         {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-            ValidateIssuer = true,
-            ValidIssuer = issuer,
-            ValidateAudience = true,
-            ValidAudience = audience,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-            NameClaimType = ClaimTypes.Name,
-            RoleClaimType = ClaimTypes.Role,
-            RequireExpirationTime = true,
-            RequireSignedTokens = true
+            OnMessageReceived = context =>
+            {
+                var token =
+                    context.Request.Cookies["accessToken"];
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
-
 // Add Authorization
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"))
@@ -103,20 +146,13 @@ app.Use(async (context, next) =>
 app.UseResponseCompression();
 
 // Apply CORS based on Environment
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors("AllowAll");
-}
-else
-{
-    app.UseCors("Production");
-}
+
+app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "Production");
+
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// --- DOCUMENTATION FIX START --- 
-// These are now outside the "if (Development)" block so they run in Production.
 
 // Generate the OpenAPI JSON
 app.MapOpenApi();
@@ -197,7 +233,8 @@ static async Task SeedDefaultAdminUser(UserManager<IdentityUser> userManager, IC
         }
         else
         {
-            Console.WriteLine($"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            Console.WriteLine(
+                $"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
         }
     }
 }

@@ -6,7 +6,7 @@ namespace AuthenticationService;
 public static class IdentityAuthServiceExtensions
 {
     public static IServiceCollection AddIdentityAuthService(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         IConfiguration configuration)
     {
         // Add JWT settings

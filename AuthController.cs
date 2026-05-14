@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Runtime.InteropServices.JavaScript;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,17 +23,45 @@ public class AuthController : ControllerBase
         var result = await _authService.LoginAsync(request);
 
         if (!result.Success)
-            return BadRequest(new
+            return BadRequest();
+
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = result.ExpiresAt,
+            Path = "/"
+        };
+
+        Response.Cookies.Append(
+            "accessToken",
+            result.Token!,
+            new CookieOptions()
             {
-                message = result.ErrorMessage,
-                errors = result.Errors
-            });
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Expires = result.ExpiresAt,
+                Path = "/"
+            }
+        );
+
+        Response.Cookies.Append(
+            "refreshToken",
+            result.RefreshToken!,
+            new CookieOptions()
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTime.UtcNow.AddDays(30),
+                Path = "/"
+            }
+        );
 
         return Ok(new
         {
-            token = result.Token,
-            refreshToken = result.RefreshToken,
-            expiresAt = result.ExpiresAt,
             user = result.User
         });
     }
@@ -59,22 +88,61 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh")]
-    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+    public async Task<IActionResult> RefreshToken()
     {
-        var result = await _authService.RefreshTokenAsync(request);
+        var refreshToken =
+            Request.Cookies["refreshToken"];
+
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return Unauthorized(new
+            {
+                message = "Refresh token missing"
+            });
+        }
+
+        var result =
+            await _authService.RefreshTokenAsync(
+                new RefreshTokenRequest
+                {
+                    RefreshToken = refreshToken
+                });
 
         if (!result.Success)
-            return BadRequest(new
+        {
+            return Unauthorized(new
             {
-                message = result.ErrorMessage,
-                errors = result.Errors
+                message = result.ErrorMessage
+            });
+        }
+
+        Response.Cookies.Append(
+            "accessToken",
+            result.Token!,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Expires = result.ExpiresAt,
+                Path = "/"
+            });
+
+        Response.Cookies.Append(
+            "refreshToken",
+            result.RefreshToken!,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTime.UtcNow.AddDays(30),
+                Path = "/"
             });
 
         return Ok(new
         {
-            token = result.Token,
-            refreshToken = result.RefreshToken,
-            expiresAt = result.ExpiresAt
+            success = true
         });
     }
 

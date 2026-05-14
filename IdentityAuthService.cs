@@ -406,7 +406,7 @@ public class IdentityAuthService : IAuthService
             UserName = user.UserName ?? "",
             FirstName = claims.FirstOrDefault(x => x.Type == CustomClaimTypes.FirstName)?.Value ?? "",
             LastName = claims.FirstOrDefault(x => x.Type == CustomClaimTypes.LastName)?.Value ?? "",
-            CreatedAt = DateTime.UtcNow, // You might want to add this to IdentityUser
+            CreatedAt = DateTime.UtcNow, 
             Roles = roles.ToList()
         };
     }
