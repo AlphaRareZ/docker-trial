@@ -114,7 +114,7 @@ builder.Services.AddCors(options =>
     {
         policy.AllowAnyOrigin()
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader().AllowCredentials();
     });
 
     options.AddPolicy("Production", policy =>
@@ -147,7 +147,8 @@ app.UseResponseCompression();
 
 // Apply CORS based on Environment
 
-app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "Production");
+//app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "Production");
+app.UseCors("AllowAll");
 
 
 app.UseAuthentication();
