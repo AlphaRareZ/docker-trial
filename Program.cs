@@ -114,12 +114,12 @@ builder.Services.AddCors(options =>
     {
         policy.AllowAnyOrigin()
             .AllowAnyMethod()
-            .AllowAnyHeader().AllowCredentials();
+            .AllowAnyHeader();
     });
 
     options.AddPolicy("Production", policy =>
     {
-        policy.WithOrigins("https://yourdomain.com", "https://www.yourdomain.com")
+        policy.WithOrigins("https://localhost:3000", "http://localhost:3000")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -147,8 +147,8 @@ app.UseResponseCompression();
 
 // Apply CORS based on Environment
 
-//app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "Production");
-app.UseCors("AllowAll");
+app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "Production");
+//app.UseCors("AllowAll");
 
 
 app.UseAuthentication();
