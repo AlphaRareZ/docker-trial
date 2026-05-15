@@ -28,7 +28,7 @@ public class AuthController : ControllerBase
 
         var cookieOptions = new CookieOptions
         {
-            HttpOnly = true,
+            HttpOnly = false,
             SameSite = SameSiteMode.None,
             Expires = result.ExpiresAt,
             Secure = !isDevelopment,
@@ -40,7 +40,7 @@ public class AuthController : ControllerBase
             result.Token!,
             new CookieOptions()
             {
-                HttpOnly = true,
+                HttpOnly = false,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
                 Expires = result.ExpiresAt,
@@ -53,7 +53,7 @@ public class AuthController : ControllerBase
             result.RefreshToken!,
             new CookieOptions()
             {
-                HttpOnly = true,
+                HttpOnly = false,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
                 Expires = DateTime.UtcNow.AddDays(30),
@@ -124,7 +124,7 @@ public class AuthController : ControllerBase
             result.Token!,
             new CookieOptions
             {
-                HttpOnly = true,
+                HttpOnly = false,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
                 Expires = result.ExpiresAt,
@@ -136,7 +136,7 @@ public class AuthController : ControllerBase
             result.RefreshToken!,
             new CookieOptions
             {
-                HttpOnly = true,
+                HttpOnly = false,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
                 Expires = DateTime.UtcNow.AddDays(30),
@@ -176,8 +176,8 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> GetCurrentUser()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        Console.WriteLine(Request.Cookies["accessToken"]);
-        Console.WriteLine(Request.Cookies["refreshToken"]);
+        Console.WriteLine($"This is Access Token:{Request.Cookies["accessToken"]}");
+        Console.WriteLine($"This is Refresh Token:{Request.Cookies["refreshToken"]}");
         var user = await _authService.GetUserByIdAsync(userId!);
         if (user == null)
             return NotFound();
