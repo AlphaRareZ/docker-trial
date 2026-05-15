@@ -87,7 +87,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("NextJsCorsPolicy", policy =>
     {
-        policy.WithOrigins("https://www.aml2ligand.online", "https://aml2ligand.online") // Must be explicit for credentials!
+        policy.WithOrigins("https://www.aml2ligand.online", "https://aml2ligand.online","http://localhost:3000") // Must be explicit for credentials!
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials(); // This line allows the browser to send the HttpOnly cookie
