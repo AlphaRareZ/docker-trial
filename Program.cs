@@ -99,15 +99,32 @@ builder.Services.AddResponseCompression();
 
 var app = builder.Build();
 
-// 2. Configure the HTTP request pipeline.
+// 1. أول حاجة الـ Forwarded Headers عشان الـ CORS يشوف الدومين صح
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | 
+                       Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
+});
 
-// Security headers middleware
+// 2. الـ CORS لازم يكون تاني حاجة فوراً
+app.UseCors("NextJsCorsPolicy");
+
+// 3. بعدين الـ Security Headers بتاعتك
 app.Use(async (context, next) =>
 {
     context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
     context.Response.Headers.Append("X-Frame-Options", "DENY");
     context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
     context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    
+    // تأكد إن الـ OPTIONS request مش بيقف هنا
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = 204;
+        await context.Response.CompleteAsync();
+        return;
+    }
+    
     await next();
 });
 
