@@ -28,7 +28,7 @@ public class AuthController : ControllerBase
 
         var cookieOptions = new CookieOptions
         {
-            HttpOnly = false,
+            HttpOnly = true,
             SameSite = SameSiteMode.None,
             Expires = result.ExpiresAt,
             Secure = !isDevelopment,
@@ -40,7 +40,7 @@ public class AuthController : ControllerBase
             result.Token!,
             new CookieOptions()
             {
-                HttpOnly = false,
+                HttpOnly = true,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
                 Expires = result.ExpiresAt,
@@ -53,7 +53,7 @@ public class AuthController : ControllerBase
             result.RefreshToken!,
             new CookieOptions()
             {
-                HttpOnly = false,
+                HttpOnly = true,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
                 Expires = DateTime.UtcNow.AddDays(30),
@@ -124,7 +124,7 @@ public class AuthController : ControllerBase
             result.Token!,
             new CookieOptions
             {
-                HttpOnly = false,
+                HttpOnly = true,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
                 Expires = result.ExpiresAt,
@@ -136,7 +136,7 @@ public class AuthController : ControllerBase
             result.RefreshToken!,
             new CookieOptions
             {
-                HttpOnly = false,
+                HttpOnly = true,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
                 Expires = DateTime.UtcNow.AddDays(30),

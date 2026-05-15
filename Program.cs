@@ -87,7 +87,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("NextJsCorsPolicy", policy =>
     {
-        policy.WithOrigins("ligandai.netlify.app", "https://ligandai.netlify.app") // Must be explicit for credentials!
+        policy.WithOrigins("http://aml2ligand.online", "https://www.aml2ligand.online") // Must be explicit for credentials!
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials(); // This line allows the browser to send the HttpOnly cookie
