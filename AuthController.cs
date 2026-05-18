@@ -9,8 +9,8 @@ namespace AuthenticationService;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    private readonly IWebHostEnvironment _env;    
-    
+    private readonly IWebHostEnvironment _env;
+
     public AuthController(IAuthService authService, IWebHostEnvironment env)
     {
         _authService = authService;
@@ -28,6 +28,7 @@ public class AuthController : ControllerBase
 
         var cookieOptions = new CookieOptions
         {
+            Domain = ".aml2ligand.online",
             HttpOnly = true,
             SameSite = SameSiteMode.None,
             Expires = result.ExpiresAt,
@@ -40,6 +41,7 @@ public class AuthController : ControllerBase
             result.Token!,
             new CookieOptions()
             {
+                Domain = ".aml2ligand.online",
                 HttpOnly = true,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
@@ -53,6 +55,7 @@ public class AuthController : ControllerBase
             result.RefreshToken!,
             new CookieOptions()
             {
+                Domain = ".aml2ligand.online",
                 HttpOnly = true,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
@@ -124,6 +127,7 @@ public class AuthController : ControllerBase
             result.Token!,
             new CookieOptions
             {
+                Domain = ".aml2ligand.online",
                 HttpOnly = true,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
@@ -136,6 +140,7 @@ public class AuthController : ControllerBase
             result.RefreshToken!,
             new CookieOptions
             {
+                Domain = ".aml2ligand.online",
                 HttpOnly = true,
                 Secure = !isDevelopment,
                 SameSite = SameSiteMode.Lax,
@@ -151,13 +156,11 @@ public class AuthController : ControllerBase
 
     [HttpPost("logout")]
     [Authorize]
-    public async Task<IActionResult> Logout([FromBody] RefreshTokenRequest request)
+    public  IActionResult Logout()
     {
-        var success = await _authService.LogoutAsync(request.RefreshToken);
-
-        if (success)
-            return Ok(new { message = "Logged out successfully" });
-        return BadRequest(new { message = "Logout failed" });
+        Response.Cookies.Delete("accessToken");
+        Response.Cookies.Delete("refreshToken");
+        return Ok(new { message = "Logged out successfully" });
     }
 
     [HttpPost("revoke-all-tokens")]
@@ -171,6 +174,7 @@ public class AuthController : ControllerBase
             return Ok(new { message = "All tokens revoked successfully" });
         return BadRequest(new { message = "Failed to revoke tokens" });
     }
+
     [HttpGet("me")]
     [Authorize]
     public async Task<IActionResult> GetCurrentUser()
