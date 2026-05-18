@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,15 +26,6 @@ public class AuthController : ControllerBase
         if (!result.Success)
             return BadRequest();
 
-        var cookieOptions = new CookieOptions
-        {
-            Domain = ".aml2ligand.online",
-            HttpOnly = true,
-            SameSite = SameSiteMode.None,
-            Expires = result.ExpiresAt,
-            Secure = !isDevelopment,
-            Path = "/"
-        };
 
         Response.Cookies.Append(
             "accessToken",
@@ -44,7 +35,7 @@ public class AuthController : ControllerBase
                 Domain = ".aml2ligand.online",
                 HttpOnly = true,
                 Secure = !isDevelopment,
-                SameSite = SameSiteMode.Lax,
+                SameSite = SameSiteMode.None,  // None = sent on all cross-origin requests (incl. subdomain fetch)
                 Expires = result.ExpiresAt,
                 Path = "/"
             }
@@ -58,7 +49,7 @@ public class AuthController : ControllerBase
                 Domain = ".aml2ligand.online",
                 HttpOnly = true,
                 Secure = !isDevelopment,
-                SameSite = SameSiteMode.Lax,
+                SameSite = SameSiteMode.None,  // None = sent on all cross-origin requests (incl. subdomain fetch)
                 Expires = DateTime.UtcNow.AddDays(30),
                 Path = "/"
             }
@@ -130,7 +121,7 @@ public class AuthController : ControllerBase
                 Domain = ".aml2ligand.online",
                 HttpOnly = true,
                 Secure = !isDevelopment,
-                SameSite = SameSiteMode.Lax,
+                SameSite = SameSiteMode.None,  // None = sent on all cross-origin requests (incl. subdomain fetch)
                 Expires = result.ExpiresAt,
                 Path = "/"
             });
@@ -143,7 +134,7 @@ public class AuthController : ControllerBase
                 Domain = ".aml2ligand.online",
                 HttpOnly = true,
                 Secure = !isDevelopment,
-                SameSite = SameSiteMode.Lax,
+                SameSite = SameSiteMode.None,  // None = sent on all cross-origin requests (incl. subdomain fetch)
                 Expires = DateTime.UtcNow.AddDays(30),
                 Path = "/"
             });
